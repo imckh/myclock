@@ -33,7 +33,9 @@ dependencies:
   flutter_layout_grid: ^2.0.0
   flutter_draggable_gridview: ^0.0.12
   one_clock: ^2.0.1
+  lunar: ^1.7.0
   weather_animation: ^1.1.0
+
 
 
   # The following adds the Cupertino Icons font to your application.
