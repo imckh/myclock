@@ -41,3 +41,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# private
+/assets/private_files/ed25519-private.pem
+/assets/private_files/ed25519-public.pem
