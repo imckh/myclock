@@ -6,6 +6,13 @@ A new Flutter project.
 
 ## qweather 加密
 
+打开终端，粘贴下列文本生成公钥和私钥:
+
+```shell
+openssl genpkey -algorithm ED25519 -out ed25519-private.pem \
+&& openssl pkey -pubout -in ed25519-private.pem > ed25519-public.pem
+```
+
 [JSON Web Token | 和风天气开发服务](https://dev.qweather.com/docs/authentication/jwt/)
 
 ### 使用 GPG 加密

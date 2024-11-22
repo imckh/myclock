@@ -23,21 +23,24 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ERROR!
-    // return WeatherScene.sunset.sceneWidget;
+    return WrapperScene.weather(
+      scene: WeatherScene.sunset,
+      clip: Clip.none,
+    );
 
     // SAME ERROR!
-    return Scaffold(
-      body: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(
-          dragDevices: {
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-          },
-        ),
-        child: PageView(
-          children: [for (final w in WeatherScene.values) w.sceneWidget],
-        ),
-      ),
-    );
+    // return Scaffold(
+    //   body: ScrollConfiguration(
+    //     behavior: ScrollConfiguration.of(context).copyWith(
+    //       dragDevices: {
+    //         PointerDeviceKind.touch,
+    //         PointerDeviceKind.mouse,
+    //       },
+    //     ),
+    //     child: PageView(
+    //       children: [for (final w in WeatherScene.values) w.sceneWidget],
+    //     ),
+    //   ),
+    // );
   }
 }

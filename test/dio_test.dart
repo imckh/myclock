@@ -1,21 +1,19 @@
-import 'dart:convert';
-
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_test_project/globals.dart';
+import 'package:flutter_test_project/utils/network.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_mock_adapter/http_mock_adapter.dart';
 
 void main() {
-  dio.interceptors.add(
-    LogInterceptor(
-      logPrint: (o) => print(o.toString()),
-    ),
-  );
-
   Future<void> request() async {
     print('request');
-    await dio.get<String>('https://httpbin.org/get').then((r) {
+    await DioSingleton()
+        .getDio()
+        .get<String>('https://httpbin.org/get')
+        .then((r) {
       print(r.data);
     }).onError((e, r) {
       print(e);
@@ -25,7 +23,8 @@ void main() {
   Future<void> request2() async {
     print('request');
     try {
-      final response = await dio.get<String>('https://httpbin.org/get');
+      final response =
+          await DioSingleton().getDio().get<String>('https://httpbin.org/get');
       print(response.data);
     } catch (e) {
       print(e);
@@ -39,74 +38,50 @@ void main() {
     await request().whenComplete(() => print('无论成功与否，我都会被执行'));
   });
 
-  Future<String> generateJWT() async {
+  Future<String> getToken() async {
     // 1. 读取私钥
     final privateKeyString =
-    await rootBundle.loadString('assets/private_files/ed25519-private.pem');
-    final privateKeyContent = privateKeyString
-        .split('\n') // 按行分割
-        .where((line) =>
-    !line.startsWith('-----BEGIN PRIVATE KEY-----') && // 过滤头部
-        !line.startsWith('-----END PRIVATE KEY-----')) // 过滤尾部
-        .join(); // 将剩下的内容合并
-    final privateKeyBytes = utf8.encode(privateKeyContent);
+        await rootBundle.loadString('assets/private_files/caiyun_token');
+    final privateKeyContent = privateKeyString.trim();
 
-    // 2. 设置签发时间和过期时间
-    final iat = DateTime
-        .now()
-        .subtract(Duration(seconds: 30))
-        .millisecondsSinceEpoch ~/ 1000;
-    final exp = DateTime
-        .now()
-        .add(Duration(hours: 24))
-        .millisecondsSinceEpoch ~/ 1000;
-
-    // 3. 创建 JWT 的 Header 和 Payload
-    final jwt = JWT(
-      {
-        'sub': QWeatherVariables.payloadSub,
-        'iat': iat,
-        'exp': exp,
-      },
-      header: {
-        'alg': JWTAlgorithm.EdDSA.name,
-        'kid': QWeatherVariables.headerKid,
-      },
-    );
-
-    // 4. 使用 EdDSA 签名并生成 Token
-    final token = jwt.sign(EdDSAPrivateKey(privateKeyBytes),
-        algorithm: JWTAlgorithm.EdDSA);
-
-    return token;
+    return privateKeyContent;
   }
 
-  Future<String> qweatherRequest(String url, String jwt_token, Map<String, dynamic> params) async {
-    // 创建一个 Dio 实例
-
-    // 设置请求选项
-    final Map<String, String> headers = {
-      'Authorization': 'Bearer $jwt_token',
-    };
-
+  Future<String> getLocation() async {
+    String defaultLoc = '116.3176,39.9760';
     try {
-      // 发送 GET 请求
-      Response response = await dio.get(
-        url,
-        queryParameters: params,
-        options: Options(
-          headers: headers,
-          responseType: ResponseType.plain,
-          validateStatus: (status) => status! < 500, // 自定义状态码验证逻辑
-        ),
-      );
+      // 请求位置权限
+      bool serviceEnabled;
+      LocationPermission permission;
 
-      // 打印响应数据
-      return response.data;
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return 'Location services are disabled.';
+      }
+
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          print('Location permissions are denied');
+          return defaultLoc;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        print(
+            "Location permissions are permanently denied, we cannot request permissions.");
+        return defaultLoc;
+      }
+
+      // 获取当前位置
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      return "${position.longitude},${position.latitude}";
     } catch (e) {
-      // 错误处理
-      print('Error: $e');
-      throw e;
+      // return 'Failed to get location: $e';
+      print('Failed to get location: $e');
+      return defaultLoc;
     }
   }
 
@@ -114,14 +89,104 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('jwt测试', () async {
-    await generateJWT().then((token) async {
+    await getToken().then((token) async {
+      print('token: $token');
       final Map<String, dynamic> queryParameters = {
-        'location': '101010100',
+        'alert': 'true',
+        'dailysteps': '2',
+        'hourlysteps': '24',
+        'token': token
       };
-      print('JWT: $token');
-      await qweatherRequest(QWeatherVariables.weatherNowUrl, token, queryParameters).then((response) {
+      String location = await getLocation();
+      String url =
+          "${CaiyunVariables.host}/${location}/${CaiyunVariables.weather}";
+      url = "httpbin.org";
+      String path = "get";
+      await httpGet("$url/$path", {}).then((response) {
         print(response);
       });
+      // await caiyunGet(url, path, {}).then((response) {
+      //   print(response);
+      // });
+      // APIService apiservice = APIService();
+      // await apiservice.getRequest("http://httpbin.org/get").then((response) {
+      //   print(response);
+      // });
     });
+  });
+
+  Future<String> httpget( String urlStr, String path, Map<String, dynamic> params) async {
+    try {
+      var url = Uri.https(urlStr, path);
+      var response = await http.get(url);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      print('Response header: ${response.headers}');
+
+      return response.body;
+    } catch (e) {
+      print('Error: $e');
+      throw e;
+    }
+  }
+
+  Future<dynamic> dioget2(String url, Map<String, dynamic> params) async {
+    try {
+      var dio = Dio();
+      dio.interceptors.add(LogInterceptor());
+      Response response = await dio.get(
+        url,
+        queryParameters: params,
+        options: Options(
+          validateStatus: (int? status) {
+            return status != null;
+          },
+        ),
+      );
+      return response.data;
+    } catch (e) {
+      print('Error: $e');
+      throw e;
+    }
+  }
+
+  Future<String> dioget(String url, Map<String, dynamic> params) async {
+    try {
+      var dio = Dio();
+      dio.interceptors.add(LogInterceptor());
+      Response response = await dio.get(
+        url,
+        queryParameters: params,
+        options: Options(
+          validateStatus: (int? status) {
+            return status != null;
+          },
+        ),
+      );
+      return response.data;
+    } catch (e) {
+      print('Error: $e');
+      throw e;
+    }
+  }
+
+  // final dioAdapter = DioAdapter(dio: dio);
+  test('network test', () async {
+    // http package
+    // String url = "httpbin.org";
+    // String path = "get";
+    // await httpget(url, path, {}).then((response) {
+    //   print(response);
+    // });
+
+    // dio package
+    await httpGet("http://httpbin.org/get", {}).then((response) {
+      print(response);
+    });
+
+    // dio package
+    // await dioget2("http://httpbin.org/get", {}).then((response) {
+    //   print(response);
+    // });
   });
 }

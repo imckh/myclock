@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
+import 'package:flutter_test_project/utils/network.dart';
+import 'package:weather_animation/weather_animation.dart';
 
 import '../clock/main_clock.dart';
-import '../clock/my_one_clock.dart';
+import '../weather/weather_text.dart';
 
 void main() {
   runApp(const DesktopLayoutApp());
@@ -64,47 +67,78 @@ class DesktopLayout extends StatelessWidget {
 
 class Header extends StatelessWidget {
   const Header({Key? key}) : super(key: key);
-
+  Future<String> dioget(String url, Map<String, dynamic> params) async {
+    try {
+      var dio = Dio();
+      dio.interceptors.add(LogInterceptor());
+      Response response = await dio.get(
+        url,
+        queryParameters: params,
+        options: Options(
+          validateStatus: (int? status) {
+            return status != null;
+          },
+        ),
+      );
+      return response.data["url"];
+    } catch (e) {
+      print('Error: $e');
+      throw e;
+    }
+  }
   @override
   Widget build(BuildContext context) =>
-      Container(color: Colors.red.withOpacity(0.5));
+      Container(
+        color: Colors.red.withOpacity(0.5),
+        child: WeatherText(),
+      );
 }
 
 class Navigation extends StatelessWidget {
   const Navigation({Key? key}) : super(key: key);
 
+  // @override
+  // Widget build(BuildContext context) => Container(
+  //       color: Colors.purple.withOpacity(0.5),
+  //     );
   @override
-  Widget build(BuildContext context) =>
-      Container(color: Colors.purple.withOpacity(0.5));
+  Widget build(BuildContext context) {
+    return WrapperScene.weather(
+      scene: WeatherScene.sunset,
+      clip: Clip.none,
+    );
+  }
 }
 
 class Content extends StatelessWidget {
   const Content({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Container(
-      color: Colors.green.withOpacity(0.5),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: MainDigitalClock(dateTime: DateTime.now()));
+  Widget build(BuildContext context) =>
+      Container(
+          color: Colors.green.withOpacity(0.5),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: MainDigitalClock(dateTime: DateTime.now()));
 }
 
 class Aside extends StatelessWidget {
   const Aside({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Container(
-      color: Colors.blue.withOpacity(0.5),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      // child: ...DigitalClockExample(DateTime.now()),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            // ...DigitalClockExample(DateTime.now())
-          ],
-        ),
-      ));
+  Widget build(BuildContext context) =>
+      Container(
+          color: Colors.blue.withOpacity(0.5),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          // child: ...DigitalClockExample(DateTime.now()),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                // ...DigitalClockExample(DateTime.now())
+              ],
+            ),
+          ));
 }
 
 class Footer extends StatelessWidget {
@@ -120,9 +154,9 @@ class Footer extends StatelessWidget {
 
         return Center(
             child: MainZhDate(
-          textColor: Colors.white,
-          textSize: parentHeight, // 初始字体大小
-        ));
+              textColor: Colors.white,
+              textSize: parentHeight, // 初始字体大小
+            ));
       },
     );
   }

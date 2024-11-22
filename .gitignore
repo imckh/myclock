@@ -45,3 +45,6 @@ app.*.map.json
 # private
 /assets/private_files/ed25519-private.pem
 /assets/private_files/ed25519-public.pem
+/assets/private_files/caiyun_token
+/assets/private_files/hefeng_token
+/assets/private_files/tmp*
