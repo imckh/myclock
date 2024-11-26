@@ -14,6 +14,23 @@ class DioSingleton {
   DioSingleton._internal() {
     dio = Dio();
 
+    // 添加拦截器
+    dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) {
+        // 在请求之前添加头
+        // options.headers['custom-header'] = 'some-value';
+        return handler.next(options); // 继续处理请求
+      },
+      onResponse: (response, handler) {
+        // 在响应之后处理数据
+        return handler.next(response); // 继续处理响应
+      },
+      onError: (err, handler) {
+        // 处理错误
+        return handler.next(err); // 继续处理错误
+      },
+    ));
+
     // 添加日志拦截器
     dio.interceptors.add(PrettyDioLogger(
         requestHeader: true,
@@ -24,11 +41,9 @@ class DioSingleton {
         compact: true,
         maxWidth: 90,
         enabled: true,
-        filter: (options, args){
+        filter: (options, args) {
           return true;
-        }
-    )
-    );
+        }));
   }
 
   // 公共的工厂构造方法

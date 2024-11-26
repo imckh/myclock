@@ -17,7 +17,8 @@ class _WeatherTextState extends State<WeatherText> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<dynamic>(
-      future: qWeatherWeather24h(pos: getPosistion(116.3176, 39.9760)),
+      // future: qWeatherWeather24h(pos: getPosistion(116.3176, 39.9760)),
+      future: getCaiyunWeather(pos: getPosistion(116.202167, 40.047986)),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();

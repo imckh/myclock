@@ -28,7 +28,6 @@ class CaiyunVariables {
   static String getPositionUrl(String token, Position pos) {
     // pos.longitude 经度
     // pos.latitude 纬度
-    return '${host}/${token}X/${pos.longitude},${pos.latitude}/${realtime}';
-    // return 'https://httpbin.org/get';
+    return '${host}/${token}/${pos.longitude},${pos.latitude}/${weather}';
   }
 }

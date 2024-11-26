@@ -32,7 +32,7 @@ class DesktopLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: Colors.white,
         // 使用网络图片作为背景
         // image: DecorationImage(
         //   image: AssetImage('assets/1.jpeg'), // 替换为你的图片链接
@@ -67,29 +67,10 @@ class DesktopLayout extends StatelessWidget {
 
 class Header extends StatelessWidget {
   const Header({Key? key}) : super(key: key);
-  Future<String> dioget(String url, Map<String, dynamic> params) async {
-    try {
-      var dio = Dio();
-      dio.interceptors.add(LogInterceptor());
-      Response response = await dio.get(
-        url,
-        queryParameters: params,
-        options: Options(
-          validateStatus: (int? status) {
-            return status != null;
-          },
-        ),
-      );
-      return response.data["url"];
-    } catch (e) {
-      print('Error: $e');
-      throw e;
-    }
-  }
   @override
   Widget build(BuildContext context) =>
       Container(
-        color: Colors.red.withOpacity(0.5),
+        // color: Colors.red.withOpacity(0.5),
         child: WeatherText(),
       );
 }
@@ -97,16 +78,13 @@ class Header extends StatelessWidget {
 class Navigation extends StatelessWidget {
   const Navigation({Key? key}) : super(key: key);
 
-  // @override
-  // Widget build(BuildContext context) => Container(
-  //       color: Colors.purple.withOpacity(0.5),
-  //     );
   @override
   Widget build(BuildContext context) {
-    return WrapperScene.weather(
-      scene: WeatherScene.sunset,
-      clip: Clip.none,
-    );
+    return Text("data");
+    // return WrapperScene.weather(
+    //   scene: WeatherScene.sunset,
+    //   clip: Clip.none,
+    // );
   }
 }
 
@@ -114,19 +92,19 @@ class Content extends StatelessWidget {
   const Content({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) =>
-      Container(
+  Widget build(BuildContext context) => Text("data");
+      /*Container(
           color: Colors.green.withOpacity(0.5),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          child: MainDigitalClock(dateTime: DateTime.now()));
+          child: MainDigitalClock(dateTime: DateTime.now()));*/
 }
 
 class Aside extends StatelessWidget {
   const Aside({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) =>
-      Container(
+  Widget build(BuildContext context) => Text("data");
+      /*Container(
           color: Colors.blue.withOpacity(0.5),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           // child: ...DigitalClockExample(DateTime.now()),
@@ -138,7 +116,7 @@ class Aside extends StatelessWidget {
                 // ...DigitalClockExample(DateTime.now())
               ],
             ),
-          ));
+          ));*/
 }
 
 class Footer extends StatelessWidget {
@@ -146,7 +124,8 @@ class Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
+    return Text("data");
+    /*return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         // 获取父空间的宽度和高度
         double parentWidth = constraints.maxWidth;
@@ -158,6 +137,6 @@ class Footer extends StatelessWidget {
               textSize: parentHeight, // 初始字体大小
             ));
       },
-    );
+    );*/
   }
 }
