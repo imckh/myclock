@@ -70,7 +70,7 @@ class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       Container(
-        // color: Colors.red.withOpacity(0.5),
+        color: Colors.red.withOpacity(0.5),
         child: WeatherText(),
       );
 }
@@ -80,11 +80,10 @@ class Navigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("data");
-    // return WrapperScene.weather(
-    //   scene: WeatherScene.sunset,
-    //   clip: Clip.none,
-    // );
+    return WrapperScene.weather(
+      scene: WeatherScene.sunset,
+      clip: Clip.none,
+    );
   }
 }
 
@@ -92,19 +91,19 @@ class Content extends StatelessWidget {
   const Content({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Text("data");
-      /*Container(
+  Widget build(BuildContext context) =>
+      Container(
           color: Colors.green.withOpacity(0.5),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          child: MainDigitalClock(dateTime: DateTime.now()));*/
+          child: MainDigitalClock(dateTime: DateTime.now()));
 }
 
 class Aside extends StatelessWidget {
   const Aside({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Text("data");
-      /*Container(
+  Widget build(BuildContext context) =>
+      Container(
           color: Colors.blue.withOpacity(0.5),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           // child: ...DigitalClockExample(DateTime.now()),
@@ -116,7 +115,7 @@ class Aside extends StatelessWidget {
                 // ...DigitalClockExample(DateTime.now())
               ],
             ),
-          ));*/
+          ));
 }
 
 class Footer extends StatelessWidget {
@@ -124,8 +123,7 @@ class Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("data");
-    /*return LayoutBuilder(
+    return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         // 获取父空间的宽度和高度
         double parentWidth = constraints.maxWidth;
@@ -137,6 +135,6 @@ class Footer extends StatelessWidget {
               textSize: parentHeight, // 初始字体大小
             ));
       },
-    );*/
+    );
   }
 }
