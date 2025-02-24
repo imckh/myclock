@@ -29,7 +29,8 @@ class _DragAndDropExampleState extends State<DragAndDropExample> {
     // 获取屏幕宽度
     final screenWidth = MediaQuery.of(context).size.width;
     // 计算 columnSize，这里减去一些边距以确保不会超出屏幕
-    return (screenWidth - (columnCount * 2)) / columnCount; // 假设每个单元格左右各有一个单位的边距
+    return (screenWidth - (columnCount * 2)) /
+        columnCount; // 假设每个单元格左右各有一个单位的边距
   }
 
   double getRowSize(BuildContext context) {
@@ -86,7 +87,8 @@ class DraggableGridItem extends StatelessWidget {
     // 获取屏幕宽度
     final screenWidth = MediaQuery.of(context).size.width;
     // 计算 columnSize，这里减去一些边距以确保不会超出屏幕
-    return (screenWidth - (columnCount * 2)) / columnCount; // 假设每个单元格左右各有一个单位的边距
+    return (screenWidth - (columnCount * 2)) /
+        columnCount; // 假设每个单元格左右各有一个单位的边距
   }
 
   double getRowSize(BuildContext context) {
@@ -139,11 +141,11 @@ class DraggableGridItem extends StatelessWidget {
 /// Acts as a position that can be occupied by the [DraggableGridItem] widget.
 class Cell extends StatefulWidget {
   const Cell({
-    Key? key,
+    super.key,
     required this.column,
     required this.row,
     required this.cellBecameOccupied,
-  }) : super(key: key);
+  });
 
   final int column;
   final int row;
@@ -171,12 +173,12 @@ class _CellState extends State<Cell> {
           decoration: BoxDecoration(
             border: isDragHovering
                 ? Border.all(
-              color: Colors.purple[400]!,
-              width: 2,
-            )
+                    color: Colors.purple[400]!,
+                    width: 2,
+                  )
                 : Border.all(
-              color: Colors.grey[400]!,
-            ),
+                    color: Colors.grey[400]!,
+                  ),
           ),
         );
       },
