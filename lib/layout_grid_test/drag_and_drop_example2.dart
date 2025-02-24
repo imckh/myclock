@@ -9,6 +9,8 @@ const columnCount = 2;
 const rowCount = 2;
 
 class DragAndDropExample extends StatefulWidget {
+  const DragAndDropExample({super.key});
+
   @override
   State<DragAndDropExample> createState() => _DragAndDropExampleState();
 }
@@ -17,12 +19,13 @@ class _DragAndDropExampleState extends State<DragAndDropExample> {
   // 用于存储每个单元格的内容
   List<List<String>> cellContents = List.generate(
     rowCount,
-        (i) => List.generate(columnCount, (j) => 'Cell $i-$j'),
+    (i) => List.generate(columnCount, (j) => 'Cell $i-$j'),
   );
 
   double getColumnSize(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return (screenWidth - (columnCount * 2)) / columnCount; // 假设每个单元格左右各有一个单位的边距
+    return (screenWidth - (columnCount * 2)) /
+        columnCount; // 假设每个单元格左右各有一个单位的边距
   }
 
   double getRowSize(BuildContext context) {
@@ -53,7 +56,8 @@ class _DragAndDropExampleState extends State<DragAndDropExample> {
           for (int j = 0; j < rowCount; j++)
             DraggableCell(
               content: cellContents[j][i],
-              onMoved: (position) => swapCellContents(GridPosition(i, j), position),
+              onMoved: (position) =>
+                  swapCellContents(GridPosition(i, j), position),
             ).withGridPlacement(columnStart: i, rowStart: j)
       ],
     );
@@ -62,10 +66,10 @@ class _DragAndDropExampleState extends State<DragAndDropExample> {
 
 class DraggableCell extends StatelessWidget {
   const DraggableCell({
-    Key? key,
+    super.key,
     required this.content,
     required this.onMoved,
-  }) : super(key: key);
+  });
 
   final String content;
   final Function(GridPosition) onMoved;
@@ -73,7 +77,8 @@ class DraggableCell extends StatelessWidget {
     // 获取屏幕宽度
     final screenWidth = MediaQuery.of(context).size.width;
     // 计算 columnSize，这里减去一些边距以确保不会超出屏幕
-    return (screenWidth - (columnCount * 2)) / columnCount; // 假设每个单元格左右各有一个单位的边距
+    return (screenWidth - (columnCount * 2)) /
+        columnCount; // 假设每个单元格左右各有一个单位的边距
   }
 
   double getRowSize(BuildContext context) {
@@ -82,6 +87,7 @@ class DraggableCell extends StatelessWidget {
     // 计算 rowSize，这里减去一些边距以确保不会超出屏幕
     return (screenHeight - (rowCount * 2)) / rowCount; // 假设每个单元格上下各有一个单位的边距
   }
+
   @override
   Widget build(BuildContext context) {
     final columnSize = getColumnSize(context);
@@ -134,6 +140,8 @@ class GridPosition {
 }
 
 class DragAndDropApp extends StatelessWidget {
+  const DragAndDropApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

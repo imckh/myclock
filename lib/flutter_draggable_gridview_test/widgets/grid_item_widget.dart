@@ -2,7 +2,7 @@ import 'package:flutter_test_project/flutter_draggable_gridview_test/constants/d
 import 'package:flutter/material.dart';
 
 class GridItem extends StatelessWidget {
-  const GridItem({required this.image, Key? key}) : super(key: key);
+  const GridItem({required this.image, super.key});
   final String image;
 
   @override

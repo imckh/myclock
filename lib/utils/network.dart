@@ -61,7 +61,7 @@ Future<dynamic> httpGet(String url, Map<String, dynamic> params) async {
   try {
     // 发送 GET 请求
     Response response = await DioSingleton().getDio().get(
-    // Response response = await dio.get(
+      // Response response = await dio.get(
       url,
       queryParameters: params,
       options: Options(
@@ -78,6 +78,6 @@ Future<dynamic> httpGet(String url, Map<String, dynamic> params) async {
   } catch (e) {
     // 错误处理
     print('Error: $e');
-    throw e;
+    rethrow;
   }
 }

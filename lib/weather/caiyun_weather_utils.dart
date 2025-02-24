@@ -18,7 +18,7 @@ Future<dynamic> getCaiyunWeather(
           (position) async {
         logger.d('Data fetched successfully: $position');
         await getCaiyunWeatherHttp(position, alert, dailysteps, hourlysteps).then((resp) {
-          respose = parseCaiyunResp(resp);
+          respose = resp;
         });
       },
       onError: (error) {
@@ -28,115 +28,11 @@ Future<dynamic> getCaiyunWeather(
     );
   } else {
     await getCaiyunWeatherHttp(pos, alert, dailysteps, hourlysteps).then((resp) {
-      respose = parseCaiyunResp(resp);
+      respose = resp;
     });
     return respose;
   }
 }
-
-/// XXX_08h_20h 代表白天数据
-/// XXX_20h_32h 代表夜晚数据
-/// XXX 代表全天数据
-///
-String parseCaiyunResp(dynamic resp) {
-  if (resp is Map) {
-    if ('ok' == resp['status'] && resp.containsKey('result')) {
-      var result = resp['result'];
-      String summary = '';
-      if (result.containsKey('forecast_keypoint')) {
-        summary += result['forecast_keypoint'];
-      }
-      if (result.containsKey('alert')) {
-
-      }
-      if (result.containsKey('realtime')) {
-
-      }
-      if (result.containsKey('minutely')) {
-
-      }
-      if (result.containsKey('hourly')) {
-
-      }
-      if (result.containsKey('daily')) {
-
-      }
-
-
-      return summary;
-    } else {
-      return resp['error'];
-    }
-  }
-  return 'API ERROR!';
-}
-
-class WeatherCondition {
-/*
-主要天气现象的优先级：降雪 > 降雨 > 雾 > 沙尘 > 浮尘 > 雾霾 > 大风 > 阴 > 多云 > 晴
-
-| 天气现象   | 代码                  | 备注                                                                          |
-| ------ | ------------------- | --------------------------------------------------------------------------- |
-| 晴（白天）  | CLEAR_DAY           | cloudrate < 0.2                                                             |
-| 晴（夜间）  | CLEAR_NIGHT         | cloudrate < 0.2                                                             |
-| 多云（白天） | PARTLY_CLOUDY_DAY   | 0.8 >= cloudrate > 0.2                                                      |
-| 多云（夜间） | PARTLY_CLOUDY_NIGHT | 0.8 >= cloudrate > 0.2                                                      |
-| 阴      | CLOUDY              | cloudrate > 0.8                                                             |
-| 轻度雾霾   | LIGHT_HAZE          | PM2.5 100~150                                                               |
-| 中度雾霾   | MODERATE_HAZE       | PM2.5 150~200                                                               |
-| 重度雾霾   | HEAVY_HAZE          | PM2.5 > 200                                                                 |
-| 小雨     | LIGHT_RAIN          | 见[降水强度](https://docs.caiyunapp.com/weather-api/v2/v2.6/tables/precip.html) |
-| 中雨     | MODERATE_RAIN       | 见[降水强度](https://docs.caiyunapp.com/weather-api/v2/v2.6/tables/precip.html) |
-| 大雨     | HEAVY_RAIN          | 见[降水强度](https://docs.caiyunapp.com/weather-api/v2/v2.6/tables/precip.html) |
-| 暴雨     | STORM_RAIN          | 见[降水强度](https://docs.caiyunapp.com/weather-api/v2/v2.6/tables/precip.html) |
-| 雾      | FOG                 | 能见度低，湿度高，风速低，温度低                                                            |
-| 小雪     | LIGHT_SNOW          | 见[降水强度](https://docs.caiyunapp.com/weather-api/v2/v2.6/tables/precip.html) |
-| 中雪     | MODERATE_SNOW       | 见[降水强度](https://docs.caiyunapp.com/weather-api/v2/v2.6/tables/precip.html) |
-| 大雪     | HEAVY_SNOW          | 见[降水强度](https://docs.caiyunapp.com/weather-api/v2/v2.6/tables/precip.html) |
-| 暴雪     | STORM_SNOW          | 见[降水强度](https://docs.caiyunapp.com/weather-api/v2/v2.6/tables/precip.html) |
-| 浮尘     | DUST                | AQI > 150, PM10 > 150，湿度 < 30%，风速 < 6 m/s                                   |
-| 沙尘     | SAND                | AQI > 150, PM10> 150，湿度 < 30%，风速 > 6 m/s                                    |
-| 大风     | WIND                |                                                                             |
- */
-  late String skyconCode;
-  late String skyconDesc;
-  late String icon;
-  late String animation; // 或者存储为 Widget
-  static var map;
-  WeatherCondition(this.skyconCode, this.skyconDesc, this.icon, this.animation);
-
-  static void _init() {
-    if (map != null) {
-      map['CLEAR_DAY'] = WeatherCondition('CLEAR_DAY', '晴（白天）', '', '');
-      map['CLEAR_NIGHT'] = WeatherCondition('CLEAR_NIGHT', '晴（夜间）', '', '');
-      map['PARTLY_CLOUDY_DAY'] = WeatherCondition('PARTLY_CLOUDY_DAY', '多云（白天）', '', '');
-      map['PARTLY_CLOUDY_NIGHT'] = WeatherCondition('PARTLY_CLOUDY_NIGHT', '多云（夜间）', '', '');
-      map['CLOUDY'] = WeatherCondition('CLOUDY', '阴', '', '');
-      map['LIGHT_HAZE'] = WeatherCondition('LIGHT_HAZE', '轻度雾霾', '', '');
-      map['MODERATE_HAZE'] = WeatherCondition('MODERATE_HAZE', '中度雾霾', '', '');
-      map['HEAVY_HAZE'] = WeatherCondition('HEAVY_HAZE', '重度雾霾', '', '');
-      map['LIGHT_RAIN'] = WeatherCondition('LIGHT_RAIN', '小雨', '', '');
-      map['MODERATE_RAIN'] = WeatherCondition('MODERATE_RAIN', '中雨', '', '');
-      map['HEAVY_RAIN'] = WeatherCondition('HEAVY_RAIN', '大雨', '', '');
-      map['STORM_RAIN'] = WeatherCondition('STORM_RAIN', '暴雨', '', '');
-      map['FOG'] = WeatherCondition('FOG', '雾', '', '');
-      map['LIGHT_SNOW'] = WeatherCondition('LIGHT_SNOW', '小雪', '', '');
-      map['MODERATE_SNOW'] = WeatherCondition('MODERATE_SNOW', '中雪', '', '');
-      map['HEAVY_SNOW'] = WeatherCondition('HEAVY_SNOW', '大雪', '', '');
-      map['STORM_SNOW'] = WeatherCondition('STORM_SNOW', '暴雪', '', '');
-      map['DUST'] = WeatherCondition('DUST', '浮尘', '', '');
-      map['SAND'] = WeatherCondition('SAND', '沙尘', '', '');
-      map['WIND'] = WeatherCondition('WIND', '大风', '', '');
-    }
-  }
-
-  static WeatherCondition getSkyCon(String skycon) {
-    _init();
-    return map[skycon];
-  }
-}
-
-
 
 Future<dynamic> getCaiyunWeatherHttp(Position position, bool alert, int dailysteps, int hourlysteps) async {
   var token = await getFileStr('assets/private_files/caiyun_token');
@@ -147,13 +43,17 @@ Future<dynamic> getCaiyunWeatherHttp(Position position, bool alert, int dailyste
     "hourlysteps": hourlysteps,
   };
   var resp;
-  // await httpGet(url, params).then((response) {
-  //   logger.d(response);
-  //   resp = response;
-  // }).catchError((error) {
-  //   print('发生错误: $error');
-  // });
-  String example = '''
+  await httpGet(url, params).then((response) {
+    logger.d(response);
+    resp = response;
+  }).catchError((error) {
+    print('发生错误: $error');
+  });
+
+  return resp;
+}
+/*
+String example = '''
 {
   "status": "ok",
   "api_version": "v2.6",
@@ -223,7 +123,7 @@ Future<dynamic> getCaiyunWeatherHttp(Position position, bool alert, int dailyste
     },
     "hourly": {
       "status": "ok",
-      "description": "多云转晴，明天上午9点钟后多云",
+      "description": "多云转晴，明天上午9点钟后",
       "precipitation": [
         {
           "datetime": "2024-11-26T16:00+08:00",
@@ -1762,10 +1662,10 @@ Future<dynamic> getCaiyunWeatherHttp(Position position, bool alert, int dailyste
       }
     },
     "primary": 0,
-    "forecast_keypoint": "多云转晴，明天上午9点钟后多云"
+    "forecast_keypoint": "多云转晴，明天上午9点钟后多云，"
   }
 }
   ''';
-  resp = jsonDecode(example);;
-  return resp;
-}
+
+  resp = jsonDecode(example);
+ */

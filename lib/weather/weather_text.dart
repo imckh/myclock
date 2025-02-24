@@ -1,32 +1,38 @@
 import 'package:flutter/material.dart';
-import '../utils/geo.dart';
+import 'package:provider/provider.dart';
+import 'weather_provider.dart';
 
-import 'caiyun_weather_utils.dart';
-import 'qweather_utils.dart';
+class WeatherText extends StatelessWidget {
+  final double containerHeight;
+  final double containerWidth;
 
-class WeatherText extends StatefulWidget {
-  WeatherText();
-
-  @override
-  _WeatherTextState createState() => _WeatherTextState();
-}
-
-class _WeatherTextState extends State<WeatherText> {
-  double? _textScaleFactor;
+  const WeatherText({
+    super.key,
+    required this.containerHeight,
+    required this.containerWidth,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<dynamic>(
-      // future: qWeatherWeather24h(pos: getPosistion(116.3176, 39.9760)),
-      future: getCaiyunWeather(pos: getPosistion(116.202167, 40.047986)),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return Text(snapshot.data ?? 'No data');
-        }
+    return Consumer<WeatherProvider>(
+      builder: (context, weatherProvider, child) {
+        return FittedBox(
+          fit: BoxFit.contain,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: containerWidth * 0.005,
+              vertical: containerHeight * 0.025,
+            ),
+            child: Text(
+              weatherProvider.weatherForecastKeypoint,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        );
       },
     );
   }

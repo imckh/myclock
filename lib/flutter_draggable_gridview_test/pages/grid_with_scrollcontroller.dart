@@ -7,8 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_draggable_gridview/flutter_draggable_gridview.dart';
 
 class GridWithScrollControllerExample extends StatefulWidget {
-  const GridWithScrollControllerExample({Key? key, required this.title})
-      : super(key: key);
+  const GridWithScrollControllerExample({super.key, required this.title});
 
   final String title;
 

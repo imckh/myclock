@@ -9,6 +9,8 @@ const columnCount = 2;
 const rowCount = 2;
 
 class DragAndDropExample extends StatefulWidget {
+  const DragAndDropExample({super.key});
+
   @override
   State<DragAndDropExample> createState() => _DragAndDropExampleState();
 }
@@ -16,12 +18,13 @@ class DragAndDropExample extends StatefulWidget {
 class _DragAndDropExampleState extends State<DragAndDropExample> {
   List<List<String>> cellContents = List.generate(
     rowCount,
-        (i) => List.generate(columnCount, (j) => 'Cell $i-$j'),
+    (i) => List.generate(columnCount, (j) => 'Cell $i-$j'),
   );
 
   double getColumnSize(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return (screenWidth - (columnCount * 2)) / columnCount; // 假设每个单元格左右各有一个单位的边距
+    return (screenWidth - (columnCount * 2)) /
+        columnCount; // 假设每个单元格左右各有一个单位的边距
   }
 
   double getRowSize(BuildContext context) {
@@ -54,7 +57,8 @@ class _DragAndDropExampleState extends State<DragAndDropExample> {
           for (int j = 0; j < rowCount; j++)
             DraggableCell(
               content: cellContents[j][i],
-              onMoved: (position) => swapCellContents(GridPosition(i, j), position),
+              onMoved: (position) =>
+                  swapCellContents(GridPosition(i, j), position),
               columnSize: columnSize,
               rowSize: rowSize,
             ).withGridPlacement(columnStart: i, rowStart: j)
@@ -65,12 +69,12 @@ class _DragAndDropExampleState extends State<DragAndDropExample> {
 
 class DraggableCell extends StatelessWidget {
   const DraggableCell({
-    Key? key,
+    super.key,
     required this.content,
     required this.onMoved,
     required this.columnSize,
     required this.rowSize,
-  }) : super(key: key);
+  });
 
   final String content;
   final Function(GridPosition) onMoved;
@@ -106,7 +110,8 @@ class DraggableCell extends StatelessWidget {
         onAcceptWithDetails: (data) {
           final RenderBox renderBox = context.findRenderObject() as RenderBox;
           final Offset globalPosition = renderBox.localToGlobal(Offset.zero);
-          final GridPosition to = findGridPosition(globalPosition, columnSize, rowSize);
+          final GridPosition to =
+              findGridPosition(globalPosition, columnSize, rowSize);
           onMoved(to);
         },
         builder: (context, candidateData, rejectedData) {
@@ -121,7 +126,8 @@ class DraggableCell extends StatelessWidget {
     );
   }
 
-  GridPosition findGridPosition(Offset offset, double columnSize, double rowSize) {
+  GridPosition findGridPosition(
+      Offset offset, double columnSize, double rowSize) {
     int x = (offset.dx / columnSize).floor();
     int y = (offset.dy / rowSize).floor();
     return GridPosition(x, y);
@@ -136,13 +142,18 @@ class GridPosition {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is GridPosition && runtimeType == other.runtimeType && x == other.x && y == other.y;
+      other is GridPosition &&
+          runtimeType == other.runtimeType &&
+          x == other.x &&
+          y == other.y;
 
   @override
   int get hashCode => x.hashCode ^ y.hashCode;
 }
 
 class DragAndDropApp extends StatelessWidget {
+  const DragAndDropApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

@@ -22,7 +22,8 @@ class _MainDigitalClockState extends State<MainDigitalClock> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        _textScaleFactor ??= constraints.maxHeight / 30;
+        // 当前只看了高度，没有看宽度
+        _textScaleFactor ??= constraints.maxHeight / 20;
         return Container(
             width: double.infinity,
             height: double.infinity,
@@ -32,14 +33,6 @@ class _MainDigitalClockState extends State<MainDigitalClock> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  DigitalClock(
-                    format: "yyyy-MM-dd",
-                    digitalClockTextColor: Colors.white,
-                    // showSeconds: true,
-                    datetime: widget.dateTime,
-                    textScaleFactor: _textScaleFactor! / 2,
-                    isLive: true,
-                  ),
                   DigitalClock(
                     format: "HH:mm",
                     digitalClockTextColor: Colors.white,
@@ -102,7 +95,7 @@ class _MainZhDateState extends State<MainZhDate> {
               nextWeekDates[i].month, nextWeekDates[i].day)
               .getFestivals());
         }
-        curLunarFestivals = "周$weekStr 农历：$lunarDate 下周节日：[${festivals.join(", ")}]";
+        curLunarFestivals = "周$weekStr 农历：$lunarDate 近期节日：[${festivals.join(", ")}]";
       });
     });
   }
@@ -114,7 +107,7 @@ class _MainZhDateState extends State<MainZhDate> {
 
   List<DateTime> getNextWeekDates(DateTime today) {
     List<DateTime> dates = [];
-    for (int i = 1; i <= 7; i++) {
+    for (int i = 1; i <= 14; i++) {
       // 计算从今天开始的第 i 天的日期
       DateTime nextDay = today.add(Duration(days: i));
       dates.add(nextDay);

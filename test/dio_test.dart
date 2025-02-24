@@ -99,7 +99,7 @@ void main() {
       };
       String location = await getLocation();
       String url =
-          "${CaiyunVariables.host}/${location}/${CaiyunVariables.weather}";
+          "${CaiyunVariables.host}/$location/${CaiyunVariables.weather}";
       url = "httpbin.org";
       String path = "get";
       await httpGet("$url/$path", {}).then((response) {
@@ -115,7 +115,8 @@ void main() {
     });
   });
 
-  Future<String> httpget( String urlStr, String path, Map<String, dynamic> params) async {
+  Future<String> httpget(
+      String urlStr, String path, Map<String, dynamic> params) async {
     try {
       var url = Uri.https(urlStr, path);
       var response = await http.get(url);
@@ -126,7 +127,7 @@ void main() {
       return response.body;
     } catch (e) {
       print('Error: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -146,7 +147,7 @@ void main() {
       return response.data;
     } catch (e) {
       print('Error: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -166,7 +167,7 @@ void main() {
       return response.data;
     } catch (e) {
       print('Error: $e');
-      throw e;
+      rethrow;
     }
   }
 

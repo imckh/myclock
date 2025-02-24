@@ -7,7 +7,7 @@ import 'package:flutter_draggable_gridview/flutter_draggable_gridview.dart';
 import '../widgets/grid_item_widget.dart';
 
 class GridExample extends StatefulWidget {
-  const GridExample({Key? key, required this.title}) : super(key: key);
+  const GridExample({super.key, required this.title});
 
   final String title;
 
