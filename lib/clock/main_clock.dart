@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:lunar/calendar/Holiday.dart';
 import 'package:lunar/calendar/Solar.dart';
 import 'package:lunar/calendar/util/HolidayUtil.dart';
-import 'package:one_clock/one_clock.dart';
+import 'package:provider/provider.dart';
+import '../providers/time_provider.dart';
 
 class MainDigitalClock extends StatefulWidget {
   final DateTime dateTime;
@@ -16,34 +17,33 @@ class MainDigitalClock extends StatefulWidget {
 }
 
 class _MainDigitalClockState extends State<MainDigitalClock> {
-  double? _textScaleFactor;
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // 当前只看了高度，没有看宽度
-        _textScaleFactor ??= constraints.maxHeight / 20;
         return Container(
-            width: double.infinity,
-            height: double.infinity,
-            alignment: Alignment.center, // 确保数字时钟在容器中居中显示
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  DigitalClock(
-                    format: "HH:mm",
-                    digitalClockTextColor: Colors.white,
-                    // showSeconds: true,
-                    datetime: widget.dateTime,
-                    textScaleFactor: _textScaleFactor!,
-                    isLive: true,
+          width: double.infinity,
+          height: double.infinity,
+          padding: EdgeInsets.symmetric(
+            horizontal: constraints.maxWidth * 0.05,
+            vertical: constraints.maxHeight * 0.05,
+          ),
+          child: Consumer<TimeProvider>(
+            builder: (context, timeProvider, child) {
+              return FittedBox(
+                fit: BoxFit.contain,
+                alignment: Alignment.center,
+                child: Text(
+                  timeProvider.timeString,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    height: 1.0,
                   ),
-                ],
-              ),
-            ));
+                ),
+              );
+            },
+          ),
+        );
       },
     );
   }
@@ -77,7 +77,8 @@ class _MainZhDateState extends State<MainZhDate> {
         int curMin = _dateTime.minute;
         int curSec = _dateTime.second;
 
-        Solar solar = Solar.fromYmdHms(curYear, curMon, curDay, curHour, curMin, curSec);
+        Solar solar =
+            Solar.fromYmdHms(curYear, curMon, curDay, curHour, curMin, curSec);
         // 周几
         String weekStr = solar.getWeekInChinese();
         // 农历日期
@@ -86,19 +87,21 @@ class _MainZhDateState extends State<MainZhDate> {
         Set<String> festivals = {};
         List<DateTime> nextWeekDates = getNextWeekDates(_dateTime);
         for (int i = 0; i < nextWeekDates.length; i++) {
-          Holiday? holiday = HolidayUtil.getHolidayByYmd(
-              nextWeekDates[i].year, nextWeekDates[i].month, nextWeekDates[i].day);
+          Holiday? holiday = HolidayUtil.getHolidayByYmd(nextWeekDates[i].year,
+              nextWeekDates[i].month, nextWeekDates[i].day);
           if (holiday != null) {
             festivals.add(holiday.getName());
           }
           festivals.addAll(Solar.fromYmd(nextWeekDates[i].year,
-              nextWeekDates[i].month, nextWeekDates[i].day)
+                  nextWeekDates[i].month, nextWeekDates[i].day)
               .getFestivals());
         }
-        curLunarFestivals = "周$weekStr 农历：$lunarDate 近期节日：[${festivals.join(", ")}]";
+        curLunarFestivals =
+            "周$weekStr 农历：$lunarDate 近期节日：[${festivals.join(", ")}]";
       });
     });
   }
+
   @override
   void dispose() {
     super.dispose();
