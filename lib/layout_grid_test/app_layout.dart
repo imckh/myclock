@@ -8,6 +8,7 @@ import 'package:weather_animation/weather_animation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import '../weather/weather_provider.dart';
+import '../providers/time_provider.dart';
 
 import '../clock/main_clock.dart';
 import '../weather/weather_scene.dart';
@@ -22,8 +23,11 @@ class DesktopLayoutApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => WeatherProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => WeatherProvider()),
+        ChangeNotifierProvider(create: (_) => TimeProvider()),
+      ],
       child: MaterialApp(
         color: Colors.black,
         debugShowCheckedModeBanner: false,
